@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { api } from '../lib/api';
+import { FALLBACK_LOCATIONS, FALLBACK_SERVICES, FALLBACK_BARBERS } from '../data/fallbackShop';
 
 const ShopContext = createContext(null);
 
@@ -23,7 +24,13 @@ export function ShopProvider({ children }) {
         setServices(svcRes.services);
         setBarbers(barRes.barbers);
       } catch (err) {
-        console.error('Failed to load shop data', err);
+        // No API reachable (e.g. a frontend-only deployment) — fall back to
+        // the seeded shop data so the site still reads as complete.
+        console.error('Failed to load shop data, using static fallback', err);
+        if (cancelled) return;
+        setLocations(FALLBACK_LOCATIONS);
+        setServices(FALLBACK_SERVICES);
+        setBarbers(FALLBACK_BARBERS);
       } finally {
         if (!cancelled) setLoading(false);
       }
