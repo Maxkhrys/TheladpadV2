@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+client/dist/
+dist-ssr/
+
+# Env files (never commit secrets)
+.env
+.env.local
+*.env
+!.env.example
+
+# Generated database (seed to regenerate)
+server/data/db.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.swp

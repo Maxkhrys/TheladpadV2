@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Work+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ink text-text-primary font-sans antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+
+  ::selection {
+    @apply bg-copper text-ink;
+  }
+}
+
+@layer components {
+  .label-eyebrow {
+    @apply font-sans uppercase tracking-widest2 text-xs text-copper font-medium;
+  }
+
+  .hairline {
+    @apply border-t border-border-subtle;
+  }
+
+  .hairline-copper {
+    @apply border-t border-border-copper/40;
+  }
+
+  .grain-overlay {
+    position: relative;
+  }
+  .grain-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.045;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  .duotone-copper {
+    position: relative;
+  }
+  .duotone-copper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(193, 107, 62, 0.28) 0%, rgba(18, 16, 14, 0.55) 100%);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+  .duotone-copper > * {
+    position: relative;
+  }
+
+  .hex-clip {
+    clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0% 50%);
+  }
+
+  .btn-copper {
+    @apply inline-flex items-center justify-center gap-2 bg-copper text-ink font-sans font-semibold uppercase tracking-widest2 text-xs px-7 py-4 rounded-sm transition-all duration-300 ease-confident hover:bg-copper-soft hover:shadow-copper active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 border border-copper/60 text-text-primary font-sans font-semibold uppercase tracking-widest2 text-xs px-7 py-4 rounded-sm transition-all duration-300 ease-confident hover:border-copper hover:bg-copper/10 active:scale-[0.98];
+  }
+
+  .card-surface {
+    @apply bg-surface border border-border-subtle rounded-sm transition-all duration-300 ease-confident;
+  }
+
+  .card-surface:hover {
+    @apply border-copper/50 shadow-copper -translate-y-1;
+  }
+
+  .input-field {
+    @apply w-full bg-ink border border-border-subtle text-text-primary placeholder:text-text-muted rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-copper transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  .min-tap {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
