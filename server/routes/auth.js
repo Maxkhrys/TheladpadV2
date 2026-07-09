@@ -5,10 +5,17 @@ import { signToken, requireAuth } from '../middleware/auth.js';
 
 const router = Router();
 
+const isProd = process.env.NODE_ENV === 'production';
+
+// In production the client (Vercel) and API (e.g. Railway) live on different
+// domains, so the auth cookie needs SameSite=None + Secure to be sent on
+// cross-site fetch requests. In dev, Vite's proxy makes everything look
+// same-origin to the browser, so Lax (and no Secure, since it's plain HTTP)
+// is correct there.
 const COOKIE_OPTS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
+  secure: isProd,
+  sameSite: isProd ? 'none' : 'lax',
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 

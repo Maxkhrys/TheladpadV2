@@ -3,7 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import { initDB } from './db.js';
+import { db, initDB } from './db.js';
+import { seedDatabase } from './data/seed.js';
 
 import webhooksRouter from './routes/webhooks.js';
 import authRouter from './routes/auth.js';
@@ -19,6 +20,10 @@ import earningsRouter from './routes/earnings.js';
 const app = express();
 const PORT = process.env.PORT || 4000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+
+// Required behind a platform load balancer (Railway, Render, etc.) so
+// `secure` cookies and protocol detection work correctly.
+app.set('trust proxy', 1);
 
 app.use(cors({ origin: CLIENT_URL, credentials: true }));
 
@@ -53,6 +58,12 @@ app.use((err, req, res, next) => {
 
 async function start() {
   await initDB();
+
+  if (db.data.users.length === 0) {
+    console.log('Empty database detected — seeding initial data...');
+    await seedDatabase();
+  }
+
   app.listen(PORT, () => {
     console.log(`The Lad Pad Barbershop API running on http://localhost:${PORT}`);
   });

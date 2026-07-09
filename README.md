@@ -99,6 +99,51 @@ Owner logs in and lands on `/dashboard/admin`; staff land on `/dashboard`.
 6. If payment never completes, the booking stays `pending` and is automatically excluded
    from availability after 15 minutes, releasing the slot.
 
+## Deploying (Vercel frontend + Railway API)
+
+The client is a static Vite build (deploys anywhere that serves static files);
+the API is a normal long-running Node/Express process with a JSON-file
+database, so it needs a host that keeps a persistent process — Vercel's
+serverless functions won't work for it as-is. This repo is set up for
+**Vercel (frontend) + Railway (API)**, on two different domains.
+
+### 1. API on Railway
+
+1. [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo** → select this repo.
+2. In the service's **Settings**, set **Root Directory** to `server`. Railway will
+   detect the Node app from `server/package.json` and run `npm install` / `npm start`
+   automatically — no extra config needed.
+3. Add these environment variables on the service (Settings → Variables):
+   - `NODE_ENV=production`
+   - `CLIENT_URL` — your Vercel URL, e.g. `https://theladpad-v2.vercel.app` (no trailing slash)
+   - `JWT_SECRET` — a long random string
+   - `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET` — see `.env.example`
+   - `EMAIL_TRANSPORT`, and the `EMAIL_SMTP_*` vars if not using the console transport
+4. **Persistence**: Railway's default filesystem is wiped on every redeploy. Add a
+   [Volume](https://docs.railway.app/reference/volumes) mounted at e.g. `/data`, then set
+   `DB_PATH=/data/db.json`. Without this, bookings/staff changes reset to the seed data
+   on every deploy (fine for a demo, not for real use).
+5. The server seeds itself automatically on first boot if the database is empty — no
+   manual seed step needed. Once deployed, copy the public URL Railway gives you
+   (Settings → Networking → **Generate Domain**).
+
+### 2. Frontend on Vercel
+
+Vite env vars are baked in at *build* time, so this has to be set before the
+build that should use it:
+
+1. Vercel project → **Settings → Environment Variables** → add `VITE_API_URL`
+   set to the Railway URL from step 1 (e.g. `https://your-service.up.railway.app`, no
+   trailing slash), for the **Production** environment.
+2. Redeploy (Deployments tab → latest → **Redeploy**, or push any commit) so the
+   build picks up the new env var.
+3. `vercel.json` at the repo root already configures the build (`client/` only,
+   output `client/dist`) and rewrites non-`/api` routes to `index.html` for
+   client-side routing.
+
+Once both are live, update `CLIENT_URL` on Railway if the Vercel URL ever changes
+(custom domain, etc.) — CORS and the auth cookie are locked to that exact origin.
+
 ## Multi-location readiness
 
 Locations are their own collection (`server/data/db.json` → `locations`), and every

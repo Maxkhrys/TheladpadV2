@@ -4,9 +4,7 @@ import { db, initDB } from '../db.js';
 
 const LOCATION_ID = 'carlow';
 
-async function seed() {
-  await initDB();
-
+export async function seedDatabase() {
   db.data.locations = [
     {
       id: LOCATION_ID,
@@ -130,7 +128,10 @@ async function seed() {
   console.log('Staff login example: cian@theladpad.ie / ChangeMe123!');
 }
 
-seed().then(() => process.exit(0)).catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Run directly via `node data/seed.js` / `npm run seed`
+const isMain = import.meta.url === `file://${process.argv[1]}`;
+if (isMain) {
+  await initDB();
+  await seedDatabase();
+  process.exit(0);
+}
