@@ -1,6 +1,5 @@
 import { useShop } from '../../context/ShopContext';
-import Photo from '../Photo';
-import { getBarberProfile } from '../../data/barberProfiles';
+import { initialsOf } from '../../lib/format';
 
 export default function StepBarber({ value, onChange, onNext }) {
   const { barbers, loading } = useShop();
@@ -27,13 +26,13 @@ export default function StepBarber({ value, onChange, onNext }) {
               type="button"
               key={barber.id}
               onClick={() => onChange(barber.id)}
-              className={`card-surface overflow-hidden text-left min-tap ${value === barber.id ? 'border-copper shadow-copper' : ''}`}
+              className={`card-surface p-5 text-left min-tap ${value === barber.id ? 'border-copper shadow-copper' : ''}`}
             >
-              <Photo src={getBarberProfile(barber.name).photo} alt={barber.name} className="h-24 w-full" />
-              <div className="p-3">
-                <p className="text-text-primary font-medium text-sm">{barber.name}</p>
-                <p className="text-text-muted text-xs mt-0.5">{barber.specialty}</p>
+              <div className="h-16 w-16 rounded-full bg-copper/15 border border-copper/40 flex items-center justify-center mb-3">
+                <span className="font-display text-xl text-copper">{initialsOf(barber.name)}</span>
               </div>
+              <p className="text-text-primary font-medium text-sm">{barber.name}</p>
+              <p className="text-text-muted text-xs mt-1">{barber.specialty}</p>
             </button>
           ) : (
             <div key={i} className="card-surface h-32 animate-pulse" />

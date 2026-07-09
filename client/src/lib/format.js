@@ -43,3 +43,13 @@ export function summarizeHours(hours) {
 export function formatPrice(n) {
   return `€${Number(n).toFixed(0)}`;
 }
+
+export function initialsOf(name) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+}
